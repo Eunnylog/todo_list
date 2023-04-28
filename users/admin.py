@@ -59,7 +59,7 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ["email", "is_admin","email","age","name","gender","introduction"]
+    list_display = ["email", "is_admin"] # 글리스트에서 나오는 필드들
     list_filter = ["is_admin"]
     fieldsets = [
         (None, {"fields": ["email", "password"]}),
@@ -68,7 +68,7 @@ class UserAdmin(BaseUserAdmin):
     ]
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
-    add_fieldsets = [
+    add_fieldsets = [  # 유저 추가할 때 쓰는 필드
         (
             None,
             {
@@ -77,7 +77,7 @@ class UserAdmin(BaseUserAdmin):
             },
         ),
     ]
-    search_fields = ["email"]
+    search_fields = ["email"]  # 검색할 때 이메일로 검색
     ordering = ["email"]
     filter_horizontal = []
 
