@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from users.models import User
 
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -14,4 +13,20 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password)  # 비밀번호 암호화
         user.save() # 암호화 설정된 유저 저장
         return user
+    
+    
+    def update(self, validated_data):
+        user = super().create(validated_data) # 검증된 데이터 사용해 -> 유저 인스턴스 생성 -> user에 담아줌
+        password = user.password
+        user.set_password(password)  # 비밀번호 암호화
+        user.save() # 암호화 설정된 유저 저장
+        return user
         
+        
+# 프로필        
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("introduction",)
+          
+    
