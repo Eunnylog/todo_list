@@ -1,3 +1,5 @@
+
+from datetime import timezone, datetime
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
@@ -34,9 +36,17 @@ class ArticleDetailView(APIView):
     
     def put(self, request, article_id):
         article = get_object_or_404(Article, id=article_id)
-        if request.user == article.user:
+        if request.user == article.user:  # 작성자 확인
             serializer = ListCreateSerializer(article, data=request.data)
             if serializer.is_valid():
+                is_complete = serializer.validated_data.get('is_complete')  # 유효성 검사를 마친 후에 나온 데이터 중 is_complete
+                if is_complete:  # 완료했으면
+                    article.is_complete = True
+                    article.completion_at = datetime.now()  # 완료한 시간으로 출력
+                else:
+                    article.is_complete = False  # 아직 완료하지 못했다면
+                    article.completion_at = None 
+                
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
@@ -47,7 +57,7 @@ class ArticleDetailView(APIView):
     
     def delete(self, request, article_id):
         article = get_object_or_404(Article, id=article_id)
-        if request.user == article.user:
+        if request.user == article.user:  # 작성자 확인
             article.delete()
             return Response(status=status.HTTP_200_OK)
         else:

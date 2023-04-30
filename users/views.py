@@ -1,12 +1,22 @@
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-from users.serializers import UserSerializer, UserDetailSerializer
+from users.serializers import UserSerializer, UserDetailSerializer, UserListSerializer
 from users.models import User
 from rest_framework.generics import get_object_or_404
+from users.serializers import CustomTokenObtainPairSerializer, UserSerializer
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+)
+
 
 # Create your views here.
 class UserView(APIView):
+    def get(self, request):
+        users = User.objects.all()
+        serializer = UserListSerializer(users, many=True)
+        return Response(serializer.data, status.HTTP_200_OK)
+    
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -15,6 +25,10 @@ class UserView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+
+
+
+
         
 class UserDetailView(APIView):
     def get(self, request, id):
@@ -43,3 +57,8 @@ class UserDetailView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             return Response("권한이 없습니다", status=status.HTTP_403_FORBIDDEN)
+        
+        
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+    
